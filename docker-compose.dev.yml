@@ -1,0 +1,40 @@
+# Development stack: Vite dev server with HMR, source bind-mounted from the host.
+#
+#   docker compose -f docker-compose.dev.yml up --build
+#
+# The API is NOT part of this stack. The SPA's requests are made by the user's
+# browser, not by this container, so VITE_API_BASE_URL has to be an address the
+# browser can reach — http://localhost:3000 published by the backend's own
+# compose stack. No shared docker network is needed for that.
+
+# Distinct project name so this stack and the production one below do not
+# collide: without it both inherit the directory name, share a container and
+# an image tag, and bringing one up tears the other down.
+name: mailpulse-front-dev
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: mailpulse-front-dev
+    environment:
+      # Read by vite.config.ts. localhost here is the browser's localhost.
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
+      # Bind mounts on macOS and Windows do not deliver inotify events, so the
+      # watcher has to poll to notice host edits. Costs some CPU; without it
+      # hot reload simply never fires.
+      VITE_USE_POLLING: ${VITE_USE_POLLING:-true}
+    ports:
+      # Must stay 5173 — the backend ships WEB_CORS_ORIGINS=http://localhost:5173
+      # and an origin mismatch fails every request at preflight.
+      - "${WEB_PORT:-5173}:5173"
+    volumes:
+      # Source is mounted so edits on the host reach the running server.
+      - .:/app
+      # ...but node_modules is not. This anonymous volume keeps the image's
+      # installed dependencies visible at /app/node_modules instead of letting
+      # the host directory shadow them, which matters when the host has no
+      # node_modules at all or has one built for a different platform.
+      - /app/node_modules
+    restart: unless-stopped

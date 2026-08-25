@@ -1,0 +1,19 @@
+# Development image: Vite dev server with hot module replacement.
+#
+# The source tree is bind-mounted by docker-compose.dev.yml rather than copied,
+# so edits on the host are picked up live. Dependencies are installed into the
+# image so a fresh clone needs no host-side npm install.
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Copied separately from the source so this layer is only rebuilt when the
+# dependency set actually changes.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]
