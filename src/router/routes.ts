@@ -66,6 +66,84 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/dashboard/OverviewView.vue'),
         meta: { title: 'Overview' },
       },
+
+      {
+        path: 'mail-accounts',
+        name: 'mail-accounts',
+        component: () => import('@/views/dashboard/mail-accounts/MailAccountsView.vue'),
+        meta: { title: 'Mail accounts' },
+      },
+      {
+        path: 'mail-accounts/:accountId',
+        name: 'mail-account',
+        component: () => import('@/views/dashboard/mail-accounts/MailAccountDetailView.vue'),
+        meta: { title: 'Mail account' },
+      },
+
+      {
+        path: 'watchers',
+        name: 'watchers',
+        component: () => import('@/views/dashboard/watchers/WatchersView.vue'),
+        meta: { title: 'Watchers' },
+      },
+      {
+        path: 'watchers/:watcherId',
+        name: 'watcher',
+        component: () => import('@/views/dashboard/watchers/WatcherDetailView.vue'),
+        meta: { title: 'Watcher' },
+      },
+
+      {
+        path: 'notifiers',
+        name: 'notifiers',
+        component: () => import('@/views/dashboard/notifiers/NotifiersView.vue'),
+        meta: { title: 'Notifiers' },
+      },
+      {
+        path: 'notifiers/:notifierId',
+        name: 'notifier',
+        component: () => import('@/views/dashboard/notifiers/NotifierDetailView.vue'),
+        meta: { title: 'Notifier' },
+      },
+
+      {
+        path: 'matches',
+        name: 'matches',
+        component: () => import('@/views/dashboard/activity/MatchesView.vue'),
+        meta: { title: 'Matches' },
+      },
+      {
+        path: 'matches/:matchId',
+        name: 'match',
+        component: () => import('@/views/dashboard/activity/MatchDetailView.vue'),
+        meta: { title: 'Match' },
+      },
+      {
+        path: 'event-runs',
+        name: 'event-runs',
+        component: () => import('@/views/dashboard/activity/EventRunsView.vue'),
+        meta: { title: 'Event runs' },
+      },
+      {
+        path: 'event-runs/:runId',
+        name: 'event-run',
+        component: () => import('@/views/dashboard/activity/EventRunDetailView.vue'),
+        meta: { title: 'Event run' },
+      },
+      {
+        path: 'deliveries',
+        name: 'deliveries',
+        component: () => import('@/views/dashboard/activity/DeliveriesView.vue'),
+        meta: { title: 'Deliveries' },
+      },
+
+      {
+        path: 'account',
+        name: 'account',
+        component: () => import('@/views/dashboard/AccountView.vue'),
+        meta: { title: 'Account' },
+      },
+
       {
         path: 'admin',
         name: 'admin',

@@ -53,13 +53,13 @@ async function signOut() {
                 and inactive styles set the same properties, so leaving both
                 classes applied would let CSS source order decide the winner.
               -->
-              <RouterLink v-slot="{ href, navigate, isExactActive }" :to="item.to" custom>
+              <RouterLink v-slot="{ href, navigate, isActive, isExactActive }" :to="item.to" custom>
                 <a
                   :href="href"
-                  :aria-current="isExactActive ? 'page' : undefined"
+                  :aria-current="(item.exact ? isExactActive : isActive) ? 'page' : undefined"
                   class="block rounded-lg px-2.5 py-2 text-sm font-medium transition"
                   :class="
-                    isExactActive
+                    (item.exact ? isExactActive : isActive)
                       ? 'bg-brand-50 text-brand-700'
                       : 'text-muted hover:bg-surface-sunken hover:text-body'
                   "

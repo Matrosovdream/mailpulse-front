@@ -5,6 +5,13 @@ export interface NavItem {
   to: { name: string }
   /** Roles that may see this item. Absent means every authenticated user. */
   roles?: RoleSlug[]
+  /**
+   * Highlight only on an exact path match. Needed for Overview, whose path is a
+   * prefix of every other dashboard route and would otherwise always look
+   * active. Section items want the opposite, so a detail page such as
+   * /dashboard/watchers/:id keeps "Watchers" lit.
+   */
+  exact?: boolean
 }
 
 export interface NavSection {
@@ -25,11 +32,27 @@ export interface NavSection {
 export const navigation: NavSection[] = [
   {
     label: 'Monitoring',
-    items: [{ label: 'Overview', to: { name: 'dashboard' } }],
+    items: [
+      { label: 'Overview', to: { name: 'dashboard' }, exact: true },
+      { label: 'Watchers', to: { name: 'watchers' } },
+      { label: 'Mail accounts', to: { name: 'mail-accounts' } },
+      { label: 'Notifiers', to: { name: 'notifiers' } },
+    ],
+  },
+  {
+    label: 'Activity',
+    items: [
+      { label: 'Matches', to: { name: 'matches' } },
+      { label: 'Event runs', to: { name: 'event-runs' } },
+      { label: 'Deliveries', to: { name: 'deliveries' } },
+    ],
   },
   {
     label: 'System',
-    items: [{ label: 'Administration', to: { name: 'admin' }, roles: ['superadmin'] }],
+    items: [
+      { label: 'Account', to: { name: 'account' } },
+      { label: 'Administration', to: { name: 'admin' }, roles: ['superadmin'] },
+    ],
   },
 ]
 
