@@ -1,0 +1,69 @@
+# Serves the built SPA.
+#
+# ${API_ORIGIN} is substituted at container start by the nginx image's envsubst
+# entrypoint. It must match the VITE_API_BASE_URL the bundle was built with, or
+# the browser will block every API call.
+
+server {
+    listen      80;
+    server_name _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # ------------------------------------------------------------ security
+    #
+    # A note on why these live here at server level and nothing below adds its
+    # own: nginx does NOT inherit add_header into a nested block that declares
+    # any add_header of its own. A `location /assets/` that set only
+    # Cache-Control would therefore silently drop every header in this list.
+    # Cache policy below is expressed with `expires`, which is a different
+    # directive and leaves this inheritance intact.
+
+    # connect-src must name the API explicitly: it is a different origin from
+    # the app, so 'self' alone would block every request the SPA makes.
+    #
+    # script-src needs no 'unsafe-inline' — the production build emits no inline
+    # scripts at all, only external files. style-src does carry it, for Vue
+    # `:style` bindings, which are real inline style attributes.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' ${API_ORIGIN}; worker-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'" always;
+
+    add_header X-Content-Type-Options "nosniff"                     always;
+    add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options        "DENY"                        always;
+    add_header Permissions-Policy     "camera=(), microphone=(), geolocation=()" always;
+
+    # ------------------------------------------------------------ transfer
+    gzip              on;
+    gzip_vary         on;
+    gzip_min_length   1024;
+    gzip_proxied      any;
+    gzip_types        text/plain text/css application/javascript application/json
+                      image/svg+xml application/manifest+json;
+
+    server_tokens off;
+
+    # ------------------------------------------------------------- caching
+    # Vite fingerprints these filenames, so a changed file gets a new URL and
+    # this can be cached hard.
+    location /assets/ {
+        expires 1y;
+        access_log off;
+        try_files $uri =404;
+    }
+
+    # The entry point must never be cached: it is what points at the current
+    # fingerprinted bundle, so a stale copy pins the browser to a deployment
+    # that no longer exists.
+    location = /index.html {
+        expires -1;
+    }
+
+    # ---------------------------------------------------------- SPA routing
+    # Client-side routes such as /dashboard/admin are not files on disk. Serve
+    # the app for anything unmatched and let vue-router resolve it, which is
+    # also what makes a hard refresh on a deep link work.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

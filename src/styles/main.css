@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+/*
+ * Shared primitives. Every layout builds on these, so a change to brand colour
+ * or the type ramp moves all three areas together.
+ */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-brand-50: oklch(0.97 0.014 254);
+  --color-brand-100: oklch(0.93 0.032 254);
+  --color-brand-200: oklch(0.87 0.06 254);
+  --color-brand-300: oklch(0.78 0.1 254);
+  --color-brand-400: oklch(0.68 0.15 254);
+  --color-brand-500: oklch(0.6 0.18 254);
+  --color-brand-600: oklch(0.52 0.19 254);
+  --color-brand-700: oklch(0.44 0.17 254);
+  --color-brand-800: oklch(0.37 0.14 254);
+  --color-brand-900: oklch(0.31 0.11 254);
+
+  --color-ink-50: oklch(0.985 0.002 250);
+  --color-ink-100: oklch(0.96 0.003 250);
+  --color-ink-200: oklch(0.92 0.005 250);
+  --color-ink-300: oklch(0.85 0.007 250);
+  --color-ink-400: oklch(0.68 0.01 250);
+  --color-ink-500: oklch(0.55 0.012 250);
+  --color-ink-600: oklch(0.44 0.014 250);
+  --color-ink-700: oklch(0.35 0.014 250);
+  --color-ink-800: oklch(0.26 0.012 250);
+  --color-ink-900: oklch(0.19 0.01 250);
+  --color-ink-950: oklch(0.14 0.008 250);
+}
+
+/*
+ * The three template groups are deliberately different surfaces, not one skin
+ * reused three times. Each layout root sets its own values for this small set
+ * of semantic variables, and the components inside read only the semantic name.
+ *
+ * This is what stops the areas converging on a single Tailwind look: a card in
+ * the auth area and a card in the dashboard use the same utility classes but
+ * resolve to different colour, radius and shadow.
+ */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-edge: var(--edge);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --radius-panel: var(--panel-radius);
+  --shadow-panel: var(--panel-shadow);
+}
+
+/* Auth — calm, centered, generous. A quiet room with one thing in it. */
+[data-surface='auth'] {
+  --surface: var(--color-ink-50);
+  --surface-raised: white;
+  --surface-sunken: var(--color-ink-100);
+  --edge: var(--color-ink-200);
+  --body: var(--color-ink-800);
+  --muted: var(--color-ink-500);
+  --panel-radius: 1rem;
+  --panel-shadow: 0 1px 2px oklch(0.19 0.01 250 / 0.04),
+    0 12px 32px -8px oklch(0.19 0.01 250 / 0.12);
+}
+
+/* Dashboard — dense, sober, built to be looked at all day. */
+[data-surface='dashboard'] {
+  --surface: var(--color-ink-100);
+  --surface-raised: white;
+  --surface-sunken: var(--color-ink-50);
+  --edge: var(--color-ink-200);
+  --body: var(--color-ink-800);
+  --muted: var(--color-ink-500);
+  --panel-radius: 0.625rem;
+  --panel-shadow: 0 1px 2px oklch(0.19 0.01 250 / 0.05);
+}
+
+/* Public — reserved for marketing. High contrast, wide, more expressive. */
+[data-surface='public'] {
+  --surface: white;
+  --surface-raised: var(--color-ink-50);
+  --surface-sunken: var(--color-ink-100);
+  --edge: var(--color-ink-200);
+  --body: var(--color-ink-900);
+  --muted: var(--color-ink-600);
+  --panel-radius: 1.25rem;
+  --panel-shadow: 0 20px 60px -20px oklch(0.19 0.01 250 / 0.2);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-ink-800);
+    background: white;
+  }
+
+  /* Visible focus for keyboard users, suppressed for pointer clicks. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
